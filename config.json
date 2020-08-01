@@ -1,4 +1,6 @@
 {
-    "prefix": "any prefix u want",
-    "token": "your token here"
+    "prefix": ".",
+    "token": "token here",
+    "dataURL": "MongoDB",
+    "owner": ["643018466261205021","611981235505594379"]
     }
