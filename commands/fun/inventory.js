@@ -39,13 +39,29 @@ module.exports = {
             User.findOne({guildID: message.guild.id, userID: member.user.id}, (err,data) => {
             if(!data){
             let errorMess = new Discord.MessageEmbed()
-            .setColor('RED')
+            .setColor(`${data.color}`)
             .setDescription(`uff **${member.user.tag}** have no in database.`)
             return message.channel.send(errorMess)
             }
             let pf = new Discord.MessageEmbed()
             .setTitle(`${member.user.username}: Inventory[:baggage_claim:]`)
-            .setDescription(`[:large_blue_diamond:]Diamonds: ${data.diamonds}\n [:orange_square:]Gold: ${data.gold}\n [:black_circle:]Iron: ${data.iron}\n [:black_circle:]Coal: ${data.coal}\n [:new_moon:]Cobblestone: ${data.cobblestone}`)
+            .setThumbnail(`https://gamepedia.cursecdn.com/minecraft_gamepedia/b/b3/Chest.png`)
+            .addFields(
+                {name: `[🏴]Netherite`, value: `${data.netherite.toFixed(3)}`, inline: true},
+                {name: `[💎]Diamonds`, value: `${data.diamonds.toFixed(3)}`, inline: true},
+                {name: `[📀]Gold`, value: `${data.gold.toFixed(2)}`, inline: true},
+                {name: `[⛓️]Iron`, value: `${data.iron.toFixed(1)}`, inline: true},
+                {name: `[🖤]Coal`, value: `${data.coal.toFixed(2)}`, inline: true},
+                {name: `[🗿]Cobblestone`, value: `${data.cobblestone}`, inline: true},
+                {name: `[:one:]Wooden Picaxe`, value: `${data.wooden_picaxe}`, inline: true},
+                {name: `[:two:]Stone Picaxe`, value: `${data.stone_picaxe}`, inline: true},
+                {name: `[:three:]Iron Picaxe`, value: `${data.iron_picaxe}`, inline: true},
+                {name: `[:four:]Golden Picaxe`, value: `${data.golden_picaxe}`, inline: true},
+                {name: `[:five:]Diamond Picaxe`, value: `${data.diamond_picaxe}`, inline: true},
+                {name: `[:six:]Netherite Picaxe`, value: `${data.netherite_picaxe}`, inline: true},
+                )
+            .setColor(`${data.color}`)
+            .setFooter(`by gerich`)
             message.channel.send(pf)
         })
     }

@@ -9,8 +9,6 @@ global.fs = require('fs')
 const broadcast = client.voice.createBroadcast();
 const ytdl = require('ytdl-core');
 const queue = new Map();
-// Зачем???
-// const message = require('discord.js')
 const fs = require('fs');
 const mongoose = require('mongoose');
 const requireAll = require('require-all')
@@ -43,8 +41,12 @@ module.exports = {
       return message.channel.send(errorMess)
     }
     let pf = new Discord.MessageEmbed()
+    .setColor(`${data.color}`)
     .setTitle(`User profile: ${member.user.username}`)
-    .setDescription(`[💸] Money: ${data.money || 0}\n[📧] Messages: ${data.messages || 0}`)
+    .setDescription(`[💸] Money: ${data.money || 0}﷼\n[📧] Messages: ${data.messages || 0}\n `)
+    .setThumbnail(`${message.author.avatarURL({format: 'jpg', dynamic: true})}`)
+    .setFooter(`by gerich`)
+    .setAuthor(`${data.bio}`)
     message.channel.send(pf)
     })
   }
