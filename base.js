@@ -389,7 +389,15 @@ if(message.content === `${prefix}buy_npix`){
         .setFooter(`by gerich`)
         message.channel.send(color_help)
     }
-    
+    const [cmd, ...arguments] = message.content.slice(prefix.length).split(/ +/g);
+        if(cmd == 'bio') {
+                    res.discordbio = arguments.join(" ");
+                    let bioalert = new Discord.MessageEmbed()
+                    .setTitle(`Bio was changed`)
+                    .setColor(`${res.color}`)
+                    .setFooter(`by gerich`)
+                    message.channel.send(bioalert)
+        }
 
     const checkColorCommand = (message = '') => {
         const regExp = new RegExp(`${prefix}color ([a-z\\s]+)`)
