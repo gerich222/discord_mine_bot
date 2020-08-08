@@ -9,8 +9,6 @@ global.fs = require('fs')
 const broadcast = client.voice.createBroadcast();
 const ytdl = require('ytdl-core');
 const queue = new Map();
-// Зачем???
-// const message = require('discord.js')
 const fs = require('fs');
 const mongoose = require('mongoose');
 const requireAll = require('require-all')
@@ -19,10 +17,41 @@ global.User = require('./data/user.js');
 bot.commands = new Discord.Collection()
 const { readdirSync } = require("fs");
 
+const colors = [
+    'RED', 
+    'GREEN', 
+    'WHITE',
+    'AQUA', 
+    'BLUE',
+    'YELLOW',
+    'PURPLE',
+    'LUMINOUS_VIVID_PINK;PINK',
+    'GOLD',
+    'ORANGE',
+    'GREY',
+    'DARKER_GREY',
+    'NAVY',
+    'DARK_AQUA',
+    'DARK_GREEN',
+    'DARK_BLUE',
+    'DARK_PURPLE',
+    'DARK_VIVID_PINK;DARK_PINK',
+    'DARK_GOLD',
+    'DARK_ORANGE',
+    'DARK_RED',
+    'DARK_GREY',
+    'LIGHT_GREY',
+    'DARK_NAVY',
+    'RANDOM'
+] // 25
+    
+
 const {
     prefix,
     token,
     dataURL,
+    apiKey,
+    sceID,
 } = require('./config.json');
 const { getInfo } = require('ytdl-core');
 const { listenerCount } = require('process');
@@ -156,14 +185,9 @@ function play(guild, song) {
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
     serverQueue.textChannel.send(`Started a new song: **${song.title}**`);
 }
-let helpembed = new Discord.MessageEmbed()
-            .setTitle(`Help`)
-            .setDescription(`.help - Help xd\n.join - just join to the voice channel\n.play - write .play {link to the youtube link} then you can listen audio from youtube\n.skip - just skip you dumbass\n.stop - Stoping the audio :moyai:\n.inv - shows your inventory\n.profile - shows your profile(updates coming soon)\n.ping - show the bot ping\n.show gay - hehehehe­`)
-client.on('message', async message => {
-    if (message.content === `${prefix}help`) {
-        message.channel.send(helpembed)
-    }
-});
+  
+
+
 
 client.on('message', async message => {
     if (message.content === `${prefix}afk`) {
@@ -181,28 +205,6 @@ client.on('message', async message => {
 
 
 client.on('message', async (message) => {
-    if (message.author.bot) return;
-    if (message.channel.type == 'dm') return;
-    User.findOne({ guildID: message.guild.id, userID: message.author.id }, (err, res) => {
-        if (err) return message.channel.send(`\`[❌DataBase]\` error to add database`)
-        if (!res) {
-            let user = new User({ guildID: message.guild.id, userID: message.author.id })
-            console.log(`\`[✅DataBase]\` **${message.author.username}** succsesful added to database`)
-            user.save().catch(err => message.channel.send(`\`[❌DataBase]\` i cant add yo to database. error: \`\`\`${err}\`\`\``));
-        } else {
-            let random = Math.floor(Math.random() * 3)
-            res.cobblestone++
-            res.money += random
-            res.messages++
-            res.diamonds += 0.003
-            res.gold += 0.05
-            res.iron += 0.1
-            res.coal += 0.4
-
-            res.save()
-
-        }
-    })
     Guild.findOne({ guildID: message.guild.id }, (err, res) => {
         if (err) return message.channel.send(`[❌DataBase] error to add you to database`)
         if (!res) {
@@ -217,7 +219,237 @@ client.on('message', async (message) => {
             if (!require('./config.json').owner.includes(message.author.id)) return;
             command.execute(bot, message, args);
         }
+        if (res.cobblestone >= 1 ) {
+            res.bio = 'amateur'
+        }
+        if (res.cobblestone >= 1000, res.coal >= 200, res.iron >= 100, res.gold >= 50, res.diamonds >= 10) {
+            res.bio = '[⛏]the one of the best miners[⛏]'
+        }
     })
+    if (message.author.bot) return;
+    if (message.channel.type == 'dm') return;
+    User.findOne({ guildID: message.guild.id, userID: message.author.id }, (err, res, data) => {
+        if(message.content === `${prefix}buy_wpix`){
+                if(err) {
+                    message.channel.send(`error: ${err}`)
+                }
+                if(res.money < 150){
+                    message.channel.send(`You have not enough money`)
+                }
+                if(!res.wooden_picaxe == 0) {
+                    message.channel.send(`You have enough picaxes`)
+                }
+                if( res.money > 150 && res.wooden_picaxe == 0) {
+                    res.money -= 150
+                    res.wooden_picaxe += 1
+                    message.channel.send(`You buyed a new picaxe`)
+            }
+        }
+        if(message.content === `${prefix}buy_spix`){
+            if(err) {
+                message.channel.send(`error: ${err}`)
+            }
+            if(res.cobblestone < 150){
+                message.channel.send(`You have not enough cobblestone`)
+            }
+            if(!res.stone_picaxe == 0) {
+                message.channel.send(`You have enough picaxes`)
+            }
+            if( res.cobblestone > 100 && res.stone_picaxe == 0) {
+                res.cobblestone -= 100
+                res.stone_picaxe += 1
+                message.channel.send(`You buyed a new picaxe`)
+        }
+    } 
+    if(message.content === `${prefix}buy_ipix`){
+        if(err) {
+            message.channel.send(`error: ${err}`)
+        }
+        if(res.iron < 50){
+            message.channel.send(`You have not enough iron`)
+        }
+        if(!res.iron_picaxe == 0) {
+            message.channel.send(`You have enough picaxes`)
+        }
+        if( res.money > 50 && res.iron_picaxe == 0) {
+            res.iron -= 50
+            res.iron_picaxe += 1
+            message.channel.send(`You buyed a new picaxe`)
+    }
+}
+if(message.content === `${prefix}buy_gpix`){
+    if(err) {
+        message.channel.send(`error: ${err}`)
+    }
+    if(res.gold < 25){
+        message.channel.send(`You have not enough gold`)
+    }
+    if(!res.golden_picaxe == 0) {
+        message.channel.send(`You have enough picaxes`)
+    }
+    if( res.gold > 50 && res.golden_picaxe == 0) {
+        res.gold -= 50
+        res.golden_picaxe += 1
+        message.channel.send(`You buyed a new picaxe`)
+}
+} 
+if(message.content === `${prefix}buy_dpix`){
+    if(err) {
+        message.channel.send(`error: ${err}`)
+    }
+    if(res.diamonds < 10){
+        message.channel.send(`You have not enough diamonds`)
+    }
+    if(!res.diamond_picaxe == 0) {
+        message.channel.send(`You have enough picaxes`)
+    }
+    if( res.diamonds > 10 && res.diamond_picaxe == 0) {
+        res.diamonds -= 10
+        res.diamond_picaxe += 1
+        message.channel.send(`You buyed a new picaxe`)
+}
+} 
+if(message.content === `${prefix}buy_npix`){
+    if(err) {
+        message.channel.send(`error: ${err}`)
+    }
+    if(res.netherite < 5){
+        message.channel.send(`You have not enough netherite`)
+    }
+    if(!res.netherite_picaxe == 0) {
+        message.channel.send(`You have enough picaxes`)
+    }
+    if(!res.diamond_picaxe == 0){
+        message.channel.send(`You haven't diamond picaxe to buy netherite picaxe`)
+    }
+    if( res.netherite > 5 && res.netherite_picaxe == 0 && res.diamond_picaxe == 1) {
+        res.netherite -= 5
+        res.netherite_picaxe += 1
+        res.diamond_picaxe -= 1
+        message.channel.send(`You buyed a new picaxe`)
+}
+} 
+        if (err) return message.channel.send(`\`[❌DataBase]\` error to add database`)
+        if (!res) {
+            let user = new User({ guildID: message.guild.id, userID: message.author.id, Username: message.author.username
+             })
+            console.log(`\`[✅DataBase]\` **${message.author.username}** succsesful added to database`)
+            user.save().catch(err => message.channel.send(`\`[❌DataBase]\` i cant add you to database. error: \`\`\`${err}\`\`\``));
+        } else {
+            if( res.wooden_picaxe == 1){
+                res.cobblestone++
+                res.coal += 0.4
+            }
+            if ( res.stone_picaxe == 1){
+                res.cobblestone++
+                res.coal +=0.4
+                res.iron += 0.1
+            }
+            if(res.iron_picaxe == 1){
+                res.cobblestone++
+                res.coal += 0.4
+                res.iron += 0.1
+                res.gold +=0.05
+                res.diamonds +=0.003
+            }
+            if(res.golden_picaxe == 1){
+                res.cobblestone++
+                res.coal +=0.4
+                res.iron += 0.1
+            }
+            if(res.diamond_picaxe == 1) {
+                res.cobblestone++
+                res.coal += 0.4
+                res.iron += 0.1
+                res.gold +=0.05
+                res.diamonds +=0.003
+                res.netherite += 0.001
+            }
+            if(res.netherite_picaxe == 1){
+                res.cobblestone++
+                res.coal += 0.4
+                res.iron += 0.1
+                res.gold +=0.05
+                res.diamonds +=0.003
+                res.netherite += 0.001
+            }
+            let random = Math.floor(Math.random() * 3)
+            res.money += random
+            res.messages++
+            res.save()
+        }
+        
+    if (message.content === `${prefix}color help`){
+        let color_help = new Discord.MessageEmbed()
+        .setColor(`${res.color}`)
+        .setTitle(`Colors:`)
+        // .setDescription(`red\ngreen\nwhite\naqua\nblue\nyellow\npurple\npink\ngold\norange\ngrey\ndarker grey\nnavy\ndark aqua\ndark green\ndark blue\ndark purple\ndark pink\ndark gold\ndark orange\ndark red\ndark grey\nlight grey\ndark navy\nrandom`)
+        .setDescription(colors.map(e=>e.split(';').pop().replace('_', ' ').toLowerCase()).join('\n'))
+        .setThumbnail(`https://i.stack.imgur.com/01XJ7.png`)
+        .setFooter(`by gerich`)
+        message.channel.send(color_help)
+    }
+    
+
+    const checkColorCommand = (message = '') => {
+        const regExp = new RegExp(`${prefix}color ([a-z\\s]+)`)
+        const execArray = regExp.exec(message)
+
+        if(!execArray)
+            return null
+
+        return execArray[1].trim().toUpperCase()
+    }
+
+    const changeColor = checkColorCommand(message.content)
+    
+    if(changeColor) {
+        for(let color of colors) {
+            let colorSplited = color.split(';')
+            let data = colorSplited.map(e => e.trim().replace('_', ' '))
+
+            if(data.indexOf(changeColor) !== -1) {
+                res.color = colorSplited[0]
+                let coloralert = new Discord.MessageEmbed()
+                .setTitle(`Color was changed`)
+                .setColor(res.color)
+                .setFooter(`by gerich`)
+                message.channel.send(coloralert)
+                break
+            }
+        }
+    }
+    
+
+    let shophelp = new Discord.MessageEmbed()
+    .setColor(`${res.color}`)
+    .setTitle(`Shop commands`)
+    // .setDescription(`.buy_wpix - buy wooden picaxe\n.buy_spix - buy stone picaxe\n.buy_ipix - buy iron picaxe\n.buy_gpix - buy golden picaxe\n.buy_dpix - buy diamond picaxe\n.buy_npix - buy netherite picaxe\n`)
+    .addFields(
+        {name: `[:one:]Wooden Picaxe`, value: `.buy_wpix`, inline: true},
+        {name: `[:two:]Stone Picaxe`, value: `.buy_spix`, inline: true},
+        {name: `[:three:]Iron Picaxe`, value: `.buy_ipix`, inline: true},
+        {name: `[:four:]Golden Picaxe`, value: `.buy_gpix`, inline: true},
+        {name: `[:five:]Diamond Picaxe`, value: `.buy_dpix`, inline: true},
+        {name: `[:six:]Netherite Picaxe`, value: `.buy_npix`, inline: true},
+    )
+    .setFooter(`by gerich`)
+    if(message.content === `${prefix}shop help`){
+        message.channel.send(shophelp)
+    }
+    
+    let helpembed = new Discord.MessageEmbed()
+    .setColor(`${res.color}`)
+    .setTitle(`Help`)
+    .setDescription(`.help - Help xd\n.join - just join to the voice channel\n.play - write .play {link to the youtube link} then you can listen audio from youtube\n.skip - just skip you dumbass\n.stop - Stoping the audio :moyai:\n.inv - shows your inventory\n.profile - shows your profile(updates coming soon)\n.ping - show the bot ping\n.show gay - hehehehe­\n.color {color} - set your color which you want (.color help for colors)\n.shop - shop menu\n.shop help - show you shop menu commands`)
+    .setFooter(`by gerich`)
+        if (message.content === `${prefix}help`) {
+            message.channel.send(helpembed)
+        }
+})
+
+
+    
 });
 /**
  * Gets all files from given directory, 
@@ -256,9 +488,9 @@ function getFiles(dir, recursive = true) {
     }
 })();
 
-// После добавления комманд надо их выполнять при вводе сообщения, 
-// так-как они сами выполнятся не начнут
+
 client.on('message', async message => {
+    
     let content = message.content;
     if (!message.author.bot || content.startsWith(prefix)) {
         content = content.slice(prefix.length);
@@ -276,12 +508,9 @@ client.on('message', async message => {
         }
     }
 });
-
-
 client.on('message', async message => {
     if (message.content === `${prefix}show gay`) {
-        await message.channel.send(`gay is ${message.guild.members.random()}`)
+        await message.channel.send(`gay is ${message.author}`)
     }
 });
-
 client.login(token);
